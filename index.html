@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Documentation Helper (CDN Based)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <script src="libs/pdf-lib.min.js"></script>
+    <script src="libs/html-docx.js"></script>
+
+    <script src="libs/mammoth.browser.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+    </script>
+
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Documentation Helper</h1>
+
+    <!-- Document Metadata -->
+    <label for="docTitle">Document Title:</label>
+    <input type="text" id="docTitle" placeholder="Enter the document title" />
+
+    <table class="metadata-table">
+        <tr>
+            <td><b>Creation Date:</b></td>
+            <td><input type="date" id="creationDate" /></td>
+            <td><b>Created By:</b></td>
+            <td><input type="text" id="createdBy" placeholder="Author's name" /></td>
+        </tr>
+        <tr>
+            <td><b>Update Date:</b></td>
+            <td><input type="date" id="updateDate" /></td>
+            <td><b>Updated By:</b></td>
+            <td><input type="text" id="updatedBy" placeholder="Updater's name" /></td>
+        </tr>
+    </table>
+
+    <label for="purpose">Purpose:</label>
+    <textarea id="purpose" placeholder="Enter the purpose of this document"></textarea>
+
+    <label for="topics">Topics:</label>
+    <textarea id="topics" placeholder="Enter topics, one per line"></textarea>
+
+    <div class="button-group">
+        <button onclick="generateDocument()">Generate Document</button>
+        <button onclick="saveAsPDF()">Save as PDF</button>
+        <button onclick="saveAsDOCX()">Save as DOCX</button>
+    </div>
+
+    <!-- Document Preview -->
+    <div id="docPreview" class="preview" contenteditable="true"></div>
+
+    <!-- Modal -->
+    <div id="topicModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Edit Content for <span id="modalTopicName"></span></h2>
+
+            <label for="templateSelect">Select a Template:</label>
+            <select id="templateSelect" onchange="applyTemplate()">
+                <option value="">-- Select a Template --</option>
+                <option value="none">No Template / Clear</option>
+                <option value="troubleshooting">Troubleshooting Guide</option>
+                <option value="installation">Installation Guide</option>
+                <option value="runbook">System Runbook</option>
+                <option value="changelog">Change Log</option>
+                <option value="userguide">User Guide</option>
+                <option value="issueresolution">Issue Resolution Template</option>
+            </select>
+
+            <!-- Formatting Tools -->
+            <div class="formatting-tools">
+                <button onmousedown="event.preventDefault(); applyFormatting('bold')" title="Bold">
+                    <b>B</b>
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('italic')" title="Italic">
+                    <i>I</i>
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('insertUnorderedList')" title="Bullets">
+                    •
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('insertOrderedList')" title="Numbered">
+                    1.
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('justifyLeft')" title="Align Left">
+                    ⇤
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('justifyCenter')" title="Align Center">
+                    ⇆
+                </button>
+                <button onmousedown="event.preventDefault(); applyFormatting('justifyRight')" title="Align Right">
+                    ⇥
+                </button>
+                <select onchange="applyFontSize(this.value)">
+                    <option value="">Font Size</option>
+                    <option value="8">8px</option>
+                    <option value="9">9px</option>
+                    <option value="10">10px</option>
+                    <option value="11">11px</option>
+                    <option value="12">12px</option>
+                    <option value="14">14px</option>
+                    <option value="16">16px</option>
+                    <option value="18">18px</option>
+                    <option value="20">20px</option>
+                    <option value="22">22px</option>
+                    <option value="24">24px</option>
+                    <option value="26">26px</option>
+                </select>
+
+                <span class="text-color-icon" title="Text Color"
+                      onclick="saveSelectionAndOpenPicker('textColorPicker')">
+                </span>
+                <input type="color" id="textColorPicker"
+                       onchange="changeTextColor(this.value)" style="display:none;" />
+
+                <span class="highlight-icon" title="Highlight Color"
+                      onclick="saveSelectionAndOpenPicker('highlightColorPicker')">
+                </span>
+                <input type="color" id="highlightColorPicker"
+                       onchange="changeHighlightColor(this.value)" style="display:none;" />
+            </div>
+
+            <!-- Editable Area inside Modal -->
+            <div id="modalContent" class="editor-area" contenteditable="true"></div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="save-button" onmousedown="event.preventDefault(); importFile()">
+                    Import File
+                </button>
+                <button class="save-button" onclick="saveTopicContent()">
+                    Save Content
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
